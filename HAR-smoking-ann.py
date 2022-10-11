@@ -9,16 +9,21 @@ from sklearn.model_selection import train_test_split
 data_dir = 'smoking_data'
 X_filename = 'smoking_input.csv'
 Y_filename = 'smoking_targets.csv'
+nrows = 1000
 
-X = pd.read_csv(os.path.join(data_dir, X_filename), nrows=100, header=None)
-y = pd.read_csv(os.path.join(data_dir, Y_filename), nrows=100, header=None)
-X = X[X[299] != np.NaN]
-print(X[299].loc[0])
+df = pd.read_csv(os.path.join(data_dir, X_filename), nrows=nrows, header=None)
+df = pd.concat([df, 
+               pd.read_csv(os.path.join(data_dir, Y_filename), nrows=nrows, header=None, names=['Label'])],
+               axis=1)
+df = df.dropna()#.reset_index(drop=True)
 # fig = px.line(X.iloc[0])
 # fig.show(renderer='browser')
 
-# X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.15, shuffle=True)
-# clf = MLPClassifier(10)
-# clf.fit(X_train, y_train)
-# print(clf.predict(X_test))
-# clf.score(X_test, y_test)
+X = df.drop(columns='Label')
+y = df['Label']
+
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.15, shuffle=True)
+clf = MLPClassifier(10)
+clf.fit(X_train, y_train)
+print(clf.predict(X_test))
+print(clf.score(X_test, y_test))
