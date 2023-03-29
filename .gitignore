@@ -4,3 +4,15 @@ smoking_data.tar.gz
 .vscode
 raw
 new_data
+.ipynb_checkpoints
+.DS_Store
+.env
+__pycache__
+visualize
+data
+old_data
+pipeline
+backup
+model
+cm.jpg
+loss.jpg
