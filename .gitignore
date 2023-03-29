@@ -11,7 +11,9 @@ __pycache__
 visualize
 data
 old_data
+data.tar.gz
 pipeline
+pipeline.tar.gz
 backup
 model
 cm.jpg
