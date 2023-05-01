@@ -1,17 +1,19 @@
 import torch
 from torch import nn
-from torch.utils import DataLoader
+from torch.utils.data import DataLoader
 from tqdm import tqdm
 import pandas as pd
 import numpy as np
+import os
 from utils import plot_and_save_cm
 
 def test(
     model: torch.nn,
-    dataset: torch.utils.Dataset,
+    dataset: torch.utils.data.Dataset,
     y_true: list[int],
     device: str,
     criterion: function,
+    batch_size: int,
     date: str
 ):
     """
@@ -20,14 +22,18 @@ def test(
 
     Args:
         model (torch.nn): model to test
-        dataset (torch.utils.Dataset): pytorch test dataset
+        dataset (torch.utils.data.Dataset): pytorch test dataset
         y_true (list[int]): true y labels to compare results to
         device (str): gpu or cpu device
         criterion (function): loss function
+        batch_size (int): batch size (for memory purposes)
         date (str): timestamp for directories
     """
+
+    os.system(f'mkdir -p results/{date}/test/')
+
     length = len(dataset)
-    dataloader = DataLoader(dataset)
+    dataloader = DataLoader(dataset, batch_size=batch_size)
     model.eval()
 
     preds = []

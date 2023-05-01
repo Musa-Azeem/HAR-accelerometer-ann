@@ -1,6 +1,6 @@
 import torch
 from tqdm import tqdm
-from torch.utils import DataLoader
+from torch.utils.data import DataLoader
 from torch import nn
 import os
 from utils import plot_and_save_loss
@@ -11,6 +11,7 @@ def train(
     model: torch.nn, 
     epochs: int, 
     batch_size: int, 
+    test_batch_size: int,
     optimizer: torch.optim.Optimizer, 
     criterion: function, 
     date: str, 
@@ -29,6 +30,7 @@ def train(
         model (torch.nn): model to train
         epochs (int): number of epochs to train the model for
         batch_size (int): batch size for training
+        test_batch_size (int): batch size for testing (for memory purposes)
         optimizer (torch.optim.Optimizer): optimizer to use during training
         criterion (function): loss function for training
         date (str): timestamp for directories
@@ -44,7 +46,7 @@ def train(
 
     # Create DataLoaders
     train_dataloader = DataLoader(train_dataset, batch_size=batch_size)
-    test_dataloader = DataLoader(test_dataset, batch_size=10000)
+    test_dataloader = DataLoader(test_dataset, batch_size=test_batch_size)
 
     n_train_batches = len(train_dataloader)
     n_test_batches = len(test_dataloader)
@@ -120,7 +122,7 @@ def train(
         torch.save(model.state_dict(), f'model/{date}/model-epoch-{epoch}.pt')
 
         # Each epoch, update temprorary loss figure
-        plot_and_save_loss(train_losses, test_losses, i, "loss.png")
+        plot_and_save_loss(train_losses, test_losses, i, "loss.jpg")
 
     # Save all train and test losses for each epoch (for continuing training later)
     torch.save(train_losses, f'results/{date}training/train_losses.pt')
