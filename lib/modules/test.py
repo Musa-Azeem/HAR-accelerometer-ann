@@ -12,7 +12,7 @@ def test(
     dataset: torch.utils.data.Dataset,
     y_true: list[int],
     device: str,
-    criterion: torch.Module,
+    criterion: nn.Module,
     batch_size: int,
     date: str
 ):
@@ -25,7 +25,7 @@ def test(
         dataset (torch.utils.data.Dataset): pytorch test dataset
         y_true (list[int]): true y labels to compare results to
         device (str): gpu or cpu device
-        criterion (torch.Module): loss function
+        criterion (nn.Module): loss function
         batch_size (int): batch size (for memory purposes)
         date (str): timestamp for directories
     """

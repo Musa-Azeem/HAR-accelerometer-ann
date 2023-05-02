@@ -2,9 +2,9 @@ import torch
 from torch import nn
 from torch.utils.data import DataLoader
 import os
-from utils import plot_and_save_holdout
-from utils import prepare_labels_for_plot
-from utils import plot_and_save_cm
+from lib.utils import plot_and_save_holdout
+from lib.utils import prepare_labels_for_plot
+from lib.utils import plot_and_save_cm
 import pandas as pd
 import numpy as np
 
@@ -12,7 +12,7 @@ def validate_on_holdouts(
     model: nn.Module,
     holdout_dir: str,
     date: str,
-    criterion: torch.Module,
+    criterion: nn.Module,
     batch_size: int,
     win_size: int,
     device: str
@@ -23,7 +23,7 @@ def validate_on_holdouts(
         model (nn.Module): _description_
         holdout_dir (str): _description_
         date (str): _description_
-        criterion (torch.Module): _description_
+        criterion (nn.Module): _description_
         batch_size (int): _description_
         win_size (int): _description_
         device (str): _description_

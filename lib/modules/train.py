@@ -1,23 +1,24 @@
 import torch
 from tqdm import tqdm
 from torch.utils.data import DataLoader
+from torch.utils.data import Dataset
 from torch import nn
 import os
 import json
-from lib.utils import plot_and_save_loss
+from lib.utils import plot_and_save_losses
 
 def train(
-    train_dataset: torch.utils.data.Dataset, 
-    test_dataset: torch.utils.data.Dataset, 
+    train_dataset: Dataset, 
+    test_dataset: Dataset, 
     model: nn.Module, 
     epochs: int, 
     batch_size: int, 
     test_batch_size: int,
     optimizer: torch.optim.Optimizer, 
-    criterion: torch.Module, 
+    criterion: nn.Module, 
     date: str, 
     device: str,
-    info: dict
+    project: str
 ) -> nn.Module:
     """
         Trains a model on the provided training dataset. Tests the model on the
@@ -36,10 +37,10 @@ def train(
         batch_size (int): batch size for training
         test_batch_size (int): batch size for testing (for memory purposes)
         optimizer (torch.optim.Optimizer): optimizer to use during training
-        criterion (torch.Module): loss function for training
+        criterion (nn.Module): loss function for training
         date (str): timestamp for directories
         device (str): gpu or cpu device
-        info (dict): info about current training session
+        project (str): directory to save results to
 
     Returns:
         nn.Module: trained model
@@ -48,7 +49,6 @@ def train(
     # Directories to save results
     os.system(f'mkdir -p results/{date}/training')
     os.system(f'mkdir -p model/{date}')
-    json.dump(info, open(f'model/{date}/info.json', 'w'))
 
     # Create DataLoaders
     train_dataloader = DataLoader(train_dataset, batch_size=batch_size)

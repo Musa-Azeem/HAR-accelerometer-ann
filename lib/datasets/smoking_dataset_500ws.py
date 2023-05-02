@@ -4,7 +4,7 @@ import os
 
 WIN_SIZE = 500
 
-class SmokingDataset(Dataset):
+class SmokingDataset_500ws(Dataset):
     def __init__(self, dir):
         self.dir = dir
     
