@@ -1,10 +1,11 @@
 import seaborn as sns
 from sklearn.metrics import confusion_matrix
 import matplotlib.pyplot as plt
+from typing import List
 
 def plot_and_save_cm(
-    y_true: list[int], 
-    y_pred: list[int], 
+    y_true: List[int], 
+    y_pred: List[int], 
     filename: str
 ) -> None:
     """ 
@@ -30,3 +31,4 @@ def plot_and_save_cm(
     fig.set_size_inches(16, 9)
     
     plt.savefig(filename, dpi=400, bbox_inches='tight')
+    plt.close()

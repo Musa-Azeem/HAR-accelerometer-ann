@@ -27,3 +27,4 @@ def plot_and_save_holdout(df: pd.DataFrame, index: int, filename: str) -> None:
     ax.plot(df_plot, label=df_plot.columns)
     ax.legend()
     plt.savefig(filename, dpi=400)
+    plt.close()

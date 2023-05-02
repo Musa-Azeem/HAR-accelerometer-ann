@@ -1,9 +1,10 @@
 import matplotlib.pyplot as plt
 import torch
+from typing import List
 
 def plot_and_save_losses(
-    train_losses: list[float], 
-    test_losses: list[float], 
+    train_losses: List[float], 
+    test_losses: List[float], 
     n_epochs: int,
     filename: str
 ) -> None:
@@ -26,3 +27,4 @@ def plot_and_save_losses(
     ax.set_title(f'Train and Test Loss over {n_epochs} Epochs')
     fig.set_size_inches(16, 9)
     plt.savefig(filename, dpi=400)
+    plt.close()

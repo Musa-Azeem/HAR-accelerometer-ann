@@ -6,15 +6,18 @@ import pandas as pd
 import numpy as np
 import os
 from lib.utils import plot_and_save_cm
+from typing import List
+
 
 def test(
     model: nn.Module,
     dataset: torch.utils.data.Dataset,
-    y_true: list[int],
+    y_true: List[int],
     device: str,
     criterion: nn.Module,
     batch_size: int,
-    date: str
+    date: str,
+    project: str
 ):
     """
         Tests the given model on the given dataset. Generates a confusion 
@@ -28,9 +31,10 @@ def test(
         criterion (nn.Module): loss function
         batch_size (int): batch size (for memory purposes)
         date (str): timestamp for directories
+        project (str): project directory
     """
 
-    os.system(f'mkdir -p results/{date}/test/')
+    os.system(f'mkdir -p {project}/results/test/')
 
     length = len(dataset)
     dataloader = DataLoader(dataset, batch_size=batch_size)
@@ -62,9 +66,9 @@ def test(
             'Accuracy': [accuracy], 
             'Loss': [loss]
         }
-    ).to_csv(f'results/{date}/evaluation/test/test-metrics.csv')
+    ).to_csv(f'{project}/results/test/test-metrics.csv')
 
 
     # Generate and save confusion matrix for test dataset
     y_pred = np.array(preds).reshape(-1,1)
-    plot_and_save_cm(y_true, y_pred, f'results/{date}/evaluation/test/test-cm.jpg')
+    plot_and_save_cm(y_true, y_pred, f'{project}/results/test/test-cm.jpg')

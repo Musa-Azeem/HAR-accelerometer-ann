@@ -19,7 +19,7 @@ def train(
     date: str, 
     device: str,
     project: str
-) -> nn.Module:
+) -> None:
     """
         Trains a model on the provided training dataset. Tests the model on the
         provided test dataset every epoch. Saves the model each epoch and live 
@@ -27,7 +27,7 @@ def train(
         completion, returns the model and saves the train and test loss of each
         epoch in the results folder.
 
-        Models are saved in the model/{date} folder, along with an info.json file
+        Models are saved in the {project}/model/ folder
 
     Args:
         train_dataset (torch.utils.data.Dataset): dataset to train model
@@ -42,13 +42,11 @@ def train(
         device (str): gpu or cpu device
         project (str): directory to save results to
 
-    Returns:
-        nn.Module: trained model
     """
 
     # Directories to save results
-    os.system(f'mkdir -p results/{date}/training')
-    os.system(f'mkdir -p model/{date}')
+    os.system(f'mkdir -p {project}/results/training')
+    os.system(f'mkdir -p {project}/model')
 
     # Create DataLoaders
     train_dataloader = DataLoader(train_dataset, batch_size=batch_size)
@@ -124,12 +122,15 @@ def train(
         print(f'\tTest Accuracy: {100*accuracy:.4}%')
         print(f'\tTest Loss: {test_losses[-1]}')
 
-        # Each epcoh, save model in timestamped directory
-        torch.save(model.state_dict(), f'model/{date}/model-epoch-{epoch}.pt')
+        # Each epoch, save model in timestamped directory
+        torch.save(model.state_dict(), f'{project}/model/model-epoch-{epoch}.pt')
 
         # Each epoch, update temprorary loss figure
-        plot_and_save_loss(train_losses, test_losses, i, "loss.jpg")
+        plot_and_save_losses(train_losses, test_losses, i, "loss.jpg")
 
     # Save all train and test losses for each epoch (for continuing training later)
-    torch.save(train_losses, f'results/{date}training/train_losses.pt')
-    torch.save(test_losses, f'results/{date}training/test_losses.pt')
+    torch.save(train_losses, f'{project}/results/training/train_losses.pt')
+    torch.save(test_losses, f'{project}/results/training/test_losses.pt')
+
+    # Save Final loss curve
+    plot_and_save_losses(train_losses, test_losses, epochs, f'{project}/results/training/training.png')

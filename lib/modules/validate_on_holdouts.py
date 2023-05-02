@@ -11,31 +11,35 @@ import numpy as np
 def validate_on_holdouts(
     model: nn.Module,
     holdout_dir: str,
+    df_dir: str,
     date: str,
     criterion: nn.Module,
     batch_size: int,
     win_size: int,
-    device: str
+    device: str,
+    project: str
 ):
     """_summary_
 
     Args:
         model (nn.Module): _description_
         holdout_dir (str): _description_
+        df_dir (str): _description_
         date (str): _description_
         criterion (nn.Module): _description_
         batch_size (int): _description_
         win_size (int): _description_
         device (str): _description_
+        project (str): _description_
     """
 
-    os.system(f'mkdir -p results/{date}/evaluation/holdouts')
+    os.system(f'mkdir -p {project}/results/holdouts')
     model.eval()
 
     for file in os.listdir(holdout_dir):
         index = file.split('-')[0]
-        os.system(f'mkdir results/{date}/evaluation/holdouts/{index}')
-        cur_dir = f'results/{date}/evaluation/holdouts/{index}'
+        os.system(f'mkdir {project}/results/holdouts/{index}')
+        cur_dir = f'{project}/results/holdouts/{index}'
 
         # Read in holdout session dataset
         dataset = torch.load(f'{holdout_dir}/{file}')
@@ -44,7 +48,7 @@ def validate_on_holdouts(
         y_true = dataset[:][1]
 
         # Read in holdout session dataframe
-        df = pd.read_csv(f'pipeline/1_xyz/{index}.csv')
+        df = pd.read_csv(f'{df_dir}/{index}.csv')
         df['y_true'] = prepare_labels_for_plot(y_true, win_size)
 
         # Keep track of metrics
