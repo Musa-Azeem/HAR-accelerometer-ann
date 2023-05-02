@@ -3,46 +3,52 @@ from tqdm import tqdm
 from torch.utils.data import DataLoader
 from torch import nn
 import os
-from utils import plot_and_save_loss
+import json
+from lib.utils import plot_and_save_loss
 
 def train(
     train_dataset: torch.utils.data.Dataset, 
     test_dataset: torch.utils.data.Dataset, 
-    model: torch.nn, 
+    model: nn.Module, 
     epochs: int, 
     batch_size: int, 
     test_batch_size: int,
     optimizer: torch.optim.Optimizer, 
-    criterion: function, 
+    criterion: torch.Module, 
     date: str, 
-    device: str
-) -> torch.nn:
+    device: str,
+    info: dict
+) -> nn.Module:
     """
         Trains a model on the provided training dataset. Tests the model on the
         provided test dataset every epoch. Saves the model each epoch and live 
         updates 'loss.png' in the home directory as the model trains. On 
         completion, returns the model and saves the train and test loss of each
-        epoch in the results folder
+        epoch in the results folder.
+
+        Models are saved in the model/{date} folder, along with an info.json file
 
     Args:
         train_dataset (torch.utils.data.Dataset): dataset to train model
         test_dataset (torch.utils.data.Dataset): dataset to test model
-        model (torch.nn): model to train
+        model (nn.Module): model to train
         epochs (int): number of epochs to train the model for
         batch_size (int): batch size for training
         test_batch_size (int): batch size for testing (for memory purposes)
         optimizer (torch.optim.Optimizer): optimizer to use during training
-        criterion (function): loss function for training
+        criterion (torch.Module): loss function for training
         date (str): timestamp for directories
         device (str): gpu or cpu device
+        info (dict): info about current training session
 
     Returns:
-        torch.nn: trained model
+        nn.Module: trained model
     """
 
     # Directories to save results
     os.system(f'mkdir -p results/{date}/training')
     os.system(f'mkdir -p model/{date}')
+    json.dump(info, open(f'model/{date}/info.json', 'w'))
 
     # Create DataLoaders
     train_dataloader = DataLoader(train_dataset, batch_size=batch_size)

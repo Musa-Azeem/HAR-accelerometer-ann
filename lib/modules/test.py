@@ -5,14 +5,14 @@ from tqdm import tqdm
 import pandas as pd
 import numpy as np
 import os
-from utils import plot_and_save_cm
+from lib.utils import plot_and_save_cm
 
 def test(
-    model: torch.nn,
+    model: nn.Module,
     dataset: torch.utils.data.Dataset,
     y_true: list[int],
     device: str,
-    criterion: function,
+    criterion: torch.Module,
     batch_size: int,
     date: str
 ):
@@ -21,11 +21,11 @@ def test(
         matrix with the results.
 
     Args:
-        model (torch.nn): model to test
+        model (nn.Module): model to test
         dataset (torch.utils.data.Dataset): pytorch test dataset
         y_true (list[int]): true y labels to compare results to
         device (str): gpu or cpu device
-        criterion (function): loss function
+        criterion (torch.Module): loss function
         batch_size (int): batch size (for memory purposes)
         date (str): timestamp for directories
     """

@@ -9,14 +9,25 @@ import pandas as pd
 import numpy as np
 
 def validate_on_holdouts(
-    model: torch.nn,
+    model: nn.Module,
     holdout_dir: str,
     date: str,
-    criterion: function,
+    criterion: torch.Module,
     batch_size: int,
     win_size: int,
     device: str
 ):
+    """_summary_
+
+    Args:
+        model (nn.Module): _description_
+        holdout_dir (str): _description_
+        date (str): _description_
+        criterion (torch.Module): _description_
+        batch_size (int): _description_
+        win_size (int): _description_
+        device (str): _description_
+    """
 
     os.system(f'mkdir -p results/{date}/evaluation/holdouts')
     model.eval()
