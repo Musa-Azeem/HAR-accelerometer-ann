@@ -2,7 +2,8 @@ import torch
 from datetime import datetime
 import os
 import json
-from lib.utils import get_parser
+import time
+from lib.utils import get_parser, Colors
 from lib.models.mlp_1hl import MLP_1hl
 from lib.datasets import SmokingDataset_500ws
 from lib.modules import train, test, validate_on_holdouts
@@ -10,8 +11,14 @@ from lib.modules import train, test, validate_on_holdouts
 if __name__=='__main__':
 
     # Command line arguments and current session date
+    args = get_parser().parse_args()
     date = datetime.now().strftime("%m.%d.%y-%H-%M-%S")
-    args = get_parser(date).parse_args()
+    start = time.time()
+
+    # Check Args
+    if args.test and not args.testmodel:
+        print('--testmodel is required if --test is set to True')
+        exit(1)
 
     # Save config information for this session
     config = {
@@ -21,7 +28,9 @@ if __name__=='__main__':
         'hidden-layers': args.hidden,
         'epochs': args.epochs,
         'batch-size': args.batch,
-        'learning-rate': args.lr
+        'learning-rate': args.lr,
+        'test': args.test, 
+        'tested-model': args.testmodel
     }
 
     # Get device for training (cpu or gpu)
@@ -32,6 +41,13 @@ if __name__=='__main__':
     model = MLP_1hl(n_hl=args.hidden, n_features=args.winsize*3).to(device)
     optimizer = MLP_1hl.get_optimizer(model)
     criterion = MLP_1hl.get_criterion()
+
+    if args.test:
+        try:
+            model.load_state_dict(torch.load(args.testmodel))
+        except:
+            print('Error in path to model')
+            exit(1)
 
     # Instantiate datasets
     train_dataset = SmokingDataset_500ws(f'{args.dataset}/4_all/train')
@@ -45,19 +61,20 @@ if __name__=='__main__':
 
 
     # Train model
-    train(
-        train_dataset=train_dataset,
-        test_dataset=test_dataset,
-        model=model,
-        epochs=args.epochs,
-        batch_size=args.batch,
-        test_batch_size=args.mem_batches,
-        optimizer=optimizer,
-        criterion=criterion,
-        date=date,
-        device=device,
-        project=dir
-    )
+    if not args.test:
+        train(
+            train_dataset=train_dataset,
+            test_dataset=test_dataset,
+            model=model,
+            epochs=args.epochs,
+            batch_size=args.batch,
+            test_batch_size=args.mem_batches,
+            optimizer=optimizer,
+            criterion=criterion,
+            date=date,
+            device=device,
+            project=dir
+        )
 
     # Test Model
     test(
@@ -76,6 +93,7 @@ if __name__=='__main__':
         model=model,
         holdout_dir=f'{args.dataset}/holdouts',
         df_dir=f'{args.dataset}/1_xyz',
+        raw_dir=f'{args.dataset}/0_raw',
         date=date,
         criterion=criterion,
         batch_size=args.mem_batches,
@@ -83,3 +101,6 @@ if __name__=='__main__':
         device=device,
         project=dir
     )
+
+    end = time.time()
+    print(f'{Colors.OKGREEN}Complete. Elapsed Time: {end-start:.3f}{Colors.ENDC}')

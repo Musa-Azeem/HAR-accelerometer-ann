@@ -1,12 +1,11 @@
 import torch
 from tqdm import tqdm
-from torch.utils.data import DataLoader
-from torch.utils.data import Dataset
+from torch.utils.data import DataLoader, Dataset
 from torch import nn
 import os
-import json
-from lib.utils import plot_and_save_losses
+from lib.utils import plot_and_save_losses, print_on_start_and_end
 
+@print_on_start_and_end
 def train(
     train_dataset: Dataset, 
     test_dataset: Dataset, 
@@ -43,6 +42,8 @@ def train(
         project (str): directory to save results to
 
     """
+
+    print('Sarting training')
 
     # Directories to save results
     os.system(f'mkdir -p {project}/results/training')
@@ -125,12 +126,9 @@ def train(
         # Each epoch, save model in timestamped directory
         torch.save(model.state_dict(), f'{project}/model/model-epoch-{epoch}.pt')
 
-        # Each epoch, update temprorary loss figure
-        plot_and_save_losses(train_losses, test_losses, i, "loss.jpg")
+        # Each epoch, save loss plot
+        plot_and_save_losses(train_losses, test_losses, i, f'{project}/results/training/training.png')
 
-    # Save all train and test losses for each epoch (for continuing training later)
-    torch.save(train_losses, f'{project}/results/training/train_losses.pt')
-    torch.save(test_losses, f'{project}/results/training/test_losses.pt')
-
-    # Save Final loss curve
-    plot_and_save_losses(train_losses, test_losses, epochs, f'{project}/results/training/training.png')
+        # Save all train and test losses for each epoch (for continuing training later)
+        torch.save(train_losses, f'{project}/results/training/train_losses.pt')
+        torch.save(test_losses, f'{project}/results/training/test_losses.pt')

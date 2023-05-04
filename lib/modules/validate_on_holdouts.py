@@ -2,16 +2,22 @@ import torch
 from torch import nn
 from torch.utils.data import DataLoader
 import os
-from lib.utils import plot_and_save_holdout
-from lib.utils import prepare_labels_for_plot
-from lib.utils import plot_and_save_cm
 import pandas as pd
 import numpy as np
+from tabulate import tabulate
+from lib.utils import (
+    plot_and_save_holdout,
+    prepare_labels_for_plot,
+    plot_and_save_cm,
+    print_on_start_and_end
+)
 
+@print_on_start_and_end
 def validate_on_holdouts(
     model: nn.Module,
     holdout_dir: str,
     df_dir: str,
+    raw_dir: str,
     date: str,
     criterion: nn.Module,
     batch_size: int,
@@ -19,22 +25,27 @@ def validate_on_holdouts(
     device: str,
     project: str
 ):
-    """_summary_
+    """
+        Validates model on holdout sets in dataset
 
     Args:
-        model (nn.Module): _description_
-        holdout_dir (str): _description_
-        df_dir (str): _description_
-        date (str): _description_
-        criterion (nn.Module): _description_
-        batch_size (int): _description_
-        win_size (int): _description_
-        device (str): _description_
-        project (str): _description_
+        model (nn.Module): trained model
+        holdout_dir (str): directory containing holdout sets (in pytorch dataset archives)
+        df_dir (str): directory containing holdout set as pandas dataframes (not windowed)
+        raw_dir (str): directory containing raw data and json labels
+        date (str): date of current session
+        criterion (nn.Module): loss function for testing model
+        batch_size (int): batch size for memory concerns
+        win_size (int): window size of data examples
+        device (str): device to run computations on
+        project (str): directory to save results
     """
 
     os.system(f'mkdir -p {project}/results/holdouts')
     model.eval()
+
+    accs = {}
+    losses = {}
 
     for file in os.listdir(holdout_dir):
         index = file.split('-')[0]
@@ -69,10 +80,11 @@ def validate_on_holdouts(
             loss += criterion(logits, y).item()
 
         y_pred = np.array(preds).reshape(-1,1)
-        accuracy = (n_correct / length).item()
-        loss = loss/len(dataloader)
-        print(f'Accuracy: {100*accuracy:.4}%')
-        print(f'Loss: {loss:.4}')
+        accs[int(index)] = (n_correct / length).item()
+        losses[int(index)] = loss/len(dataloader)
+
+        # print(f'Accuracy: {100*accuracy:.4}%')
+        # print(f'Loss: {loss:.4}')
 
         df['y_pred'] = prepare_labels_for_plot(y_pred, win_size)
 
@@ -82,11 +94,20 @@ def validate_on_holdouts(
 
         # Save metrics
         pd.DataFrame({
-            'Accuracy': [accuracy], 
-            'Loss': [loss]
+            'Accuracy': [accs[int(index)]], 
+            'Loss': [losses[int(index)]]
         }).to_csv(f'{cur_dir}/holdout-{index}-metrics.csv')
 
 
         # Save Figures
-        plot_and_save_holdout(df, index, f'{cur_dir}/holdout-{index}.jpg')
+        plot_and_save_holdout(df, raw_dir, index, f'{cur_dir}/holdout-{index}.jpg')
         plot_and_save_cm(y_true, y_pred, f'{cur_dir}/holdout-{index}-cm.jpg')
+
+    print(tabulate(
+        [
+            ['Accuracy'] + [accs[index] for index in sorted(accs.keys())],
+            ['Loss'] + [losses[index] for index in sorted(losses.keys())]
+        ],
+        headers=[index for index in sorted(accs.keys())],
+        tablefmt='simple_grid'
+    ))        

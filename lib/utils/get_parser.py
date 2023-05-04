@@ -1,9 +1,9 @@
 import argparse
 
 
-def get_parser(date):
+def get_parser():
     parser = argparse.ArgumentParser(
-        prog='train_mlp_1hl',
+        prog='main_mlp_1hl',
         description='Python script to train smoking neural networks'
     )
 
@@ -15,6 +15,8 @@ def get_parser(date):
     parser.add_argument('-u', '--dataset', default='.', help='Data directory')
     parser.add_argument('-m', '--mem-batches', type=int, default=10000, help='Batch size for memory concerns during testing')
     parser.add_argument('-d', '--device', type=int, default=0, help='Cuda device index to use')
-    parser.add_argument('-p', '--project', type=str, default=f'projects/{date}', help='Project directory to save results')
+    parser.add_argument('-p', '--project', type=str, default=f'projects', help='Project directory to save results')
+    parser.add_argument('-t', '--test', action='store_true', help='Set to true if only testing a model, not training')
+    parser.add_argument('--testmodel', type=str, default=None, help='Path to model to test, ignored if --test is False, required if --test is True')
 
     return parser
