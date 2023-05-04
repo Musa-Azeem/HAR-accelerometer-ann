@@ -52,7 +52,13 @@ if __name__=='__main__':
     # Instantiate datasets
     train_dataset = SmokingDataset_500ws(f'{args.dataset}/4_all/train')
     test_dataset = SmokingDataset_500ws(f'{args.dataset}/4_all/test')
-    y_true = test_dataset[:][1] # do this once, it takes long -_-
+
+    # If the dataset has y_true saved as pytorch file, use that
+    if os.path.isfile(f'{args.dataset}/y_true/y_test.pt'):
+        y_true = torch.load(f'{args.dataset}/y_true/y_test.pt')
+    else:
+        # otherwise, iterate through test dataset and get each label
+        y_true = test_dataset[:][1]
 
     # Create directory for results
     dir = f'{args.project}/{date}'
