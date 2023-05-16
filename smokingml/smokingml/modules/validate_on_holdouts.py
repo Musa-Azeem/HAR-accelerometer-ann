@@ -5,7 +5,7 @@ import os
 import pandas as pd
 import numpy as np
 from tabulate import tabulate
-from lib.utils import (
+from smokingml.utils import (
     plot_and_save_holdout,
     prepare_labels_for_plot,
     plot_and_save_cm,

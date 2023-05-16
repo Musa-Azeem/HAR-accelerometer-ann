@@ -5,7 +5,7 @@ from tqdm import tqdm
 import pandas as pd
 import numpy as np
 import os
-from lib.utils import plot_and_save_cm, print_on_start_and_end
+from smokingml.utils import plot_and_save_cm, print_on_start_and_end
 from typing import List
 
 @print_on_start_and_end

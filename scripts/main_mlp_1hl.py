@@ -3,10 +3,10 @@ from datetime import datetime
 import os
 import json
 import time
-from lib.utils import get_parser, Colors
-from lib.models.mlp_1hl import MLP_1hl
-from lib.datasets import SmokingDataset_500ws
-from lib.modules import train, test, validate_on_holdouts
+from smokingml.utils import get_parser, Colors
+from smokingml.models.mlp_1hl import MLP_1hl
+from smokingml.datasets import SmokingDataset_500ws
+from smokingml.modules import train, test, validate_on_holdouts
 
 if __name__=='__main__':
 

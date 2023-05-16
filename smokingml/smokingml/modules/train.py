@@ -3,7 +3,7 @@ from tqdm import tqdm
 from torch.utils.data import DataLoader, Dataset
 from torch import nn
 import os
-from lib.utils import plot_and_save_losses, print_on_start_and_end
+from smokingml.utils import plot_and_save_losses, print_on_start_and_end
 
 @print_on_start_and_end
 def train(

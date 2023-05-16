@@ -1,5 +1,5 @@
 import time
-from lib.utils import Colors
+from smokingml.utils import Colors
 from typing import Callable
 
 def print_on_start_and_end(func: Callable) -> Callable:
