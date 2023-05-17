@@ -23,7 +23,9 @@ def validate_on_holdouts(
     batch_size: int,
     win_size: int,
     device: str,
-    project: str
+    project: str,
+    dm_factor: int,
+    cnn: bool=False
 ):
     """
         Validates model on holdout sets in dataset
@@ -39,6 +41,8 @@ def validate_on_holdouts(
         win_size (int): window size of data examples
         device (str): device to run computations on
         project (str): directory to save results
+        dm_factor (int): factor of dessimation
+        cnn (bool): true if model uses convolution
     """
 
     os.system(f'mkdir -p {project}/results/holdouts')
@@ -72,6 +76,9 @@ def validate_on_holdouts(
             X = X.to(device) 
             y = y.to(device)
 
+            if cnn:
+                X = X.reshape([-1, 3, win_size])
+
             logits = model(X)
             pred = torch.round(nn.Sigmoid()(logits))
 
@@ -100,7 +107,7 @@ def validate_on_holdouts(
 
 
         # Save Figures
-        plot_and_save_holdout(df, raw_dir, index, f'{cur_dir}/holdout-{index}.jpg')
+        plot_and_save_holdout(df, raw_dir, index, f'{cur_dir}/holdout-{index}.jpg', dm_factor)
         plot_and_save_cm(y_true, y_pred, f'{cur_dir}/holdout-{index}-cm.jpg')
 
     print(tabulate(
