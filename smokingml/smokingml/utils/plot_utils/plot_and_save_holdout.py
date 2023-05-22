@@ -6,7 +6,8 @@ def plot_and_save_holdout(
     df: pd.DataFrame, 
     raw_dir: str,
     index: int, 
-    filename: str
+    filename: str,
+    dm_factor: int
 ) -> None:
     """
         Plots and saves true labels and predictions on the xyz signal of a 
@@ -23,8 +24,8 @@ def plot_and_save_holdout(
     stop = 0
     with open(f'{raw_dir}/{index}/{index}_data.json', 'r') as f:
         annot = json.load(f)
-        start = annot['start']
-        stop = annot['end']
+        start = annot['start']//dm_factor
+        stop = annot['end']//dm_factor
 
     # plot signals
     df_plot = df.iloc[start:stop].reset_index(drop=True)
