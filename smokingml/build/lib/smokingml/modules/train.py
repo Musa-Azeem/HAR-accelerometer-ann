@@ -43,8 +43,6 @@ def train(
 
     """
 
-    print('Sarting training')
-
     # Directories to save results
     os.system(f'mkdir -p {project}/results/training')
     os.system(f'mkdir -p {project}/model')
@@ -63,15 +61,16 @@ def train(
     test_losses = []
 
     # Train and test each epoch
-    for i,epoch in enumerate(range(epochs)):
+    pbar = tqdm(range(epochs))
+    for i,epoch in enumerate(pbar):
 
         # Train Model over entire dataset in batches of batch_size
-        print(f'Epoch {epoch} - Training')
         model.train()
         train_losses.append(0)
 
         # Train Loop
-        for X_train, y_train in tqdm(train_dataloader):
+        pbar.set_description(f'Epoch {i}: Training')
+        for X_train, y_train in train_dataloader:
 
             X_train = X_train.to(device)
             y_train = y_train.to(device)
@@ -89,19 +88,18 @@ def train(
 
         # Get average loss over all batches for this epoch
         train_losses[-1] /= n_train_batches
-        print(f'\tloss: {train_losses[-1]}')
 
 
         # Test model over entire train dataset
-        print(f'Epoch {epoch} - Testing')
         model.eval()
 
         preds = []
         n_correct = 0
         test_losses.append(0)
 
+        pbar.set_description(f'Epoch {i}: Testing')
         # Train loop
-        for X_test, y_test in tqdm(test_dataloader):
+        for X_test, y_test in test_dataloader:
             X_test = X_test.to(device)
             y_test = y_test.to(device)
 
@@ -120,9 +118,6 @@ def train(
         test_losses[-1] /= n_test_batches
         accuracy = (n_correct / test_length).item()
 
-        print(f'\tTest Accuracy: {100*accuracy:.4}%')
-        print(f'\tTest Loss: {test_losses[-1]}')
-
         # Each epoch, save model in timestamped directory
         torch.save(model.state_dict(), f'{project}/model/model-epoch-{epoch}.pt')
 
@@ -132,3 +127,4 @@ def train(
         # Save all train and test losses for each epoch (for continuing training later)
         torch.save(train_losses, f'{project}/results/training/train_losses.pt')
         torch.save(test_losses, f'{project}/results/training/test_losses.pt')
+        torch.save(accuracy, f'{project}/results/training/test_accuracy.pt')
