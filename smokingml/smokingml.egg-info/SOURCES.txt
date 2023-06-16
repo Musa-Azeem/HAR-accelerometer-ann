@@ -15,10 +15,11 @@ smokingml/modules/train.py
 smokingml/modules/validate_on_holdouts.py
 smokingml/utils/__init__.py
 smokingml/utils/colors.py
-smokingml/utils/del.py
 smokingml/utils/get_parser.py
 smokingml/utils/prepare_labels_for_plot.py
 smokingml/utils/print_on_start_and_end.py
+smokingml/utils/dataloading/__init__.py
+smokingml/utils/dataloading/load_sessions_by_idxs.py
 smokingml/utils/plot_utils/__init__.py
 smokingml/utils/plot_utils/plot_and_save_cm.py
 smokingml/utils/plot_utils/plot_and_save_holdout.py
