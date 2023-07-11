@@ -1,6 +1,6 @@
 from pathlib import Path
 import numpy as np
-from utils import get_all_session_ids
+from .utils import get_all_session_ids
 from . import NursingDatasetV1
 
 def nursingv1_train_dev_test_split(

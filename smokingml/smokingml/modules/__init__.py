@@ -1,3 +1,2 @@
-from ..modules.test import test
-from ..modules.train import train
-from ..modules.validate_on_holdouts import validate_on_holdouts
+from .optimization_loop import optimization_loop
+from .evaluate_loop import evaluate_loop

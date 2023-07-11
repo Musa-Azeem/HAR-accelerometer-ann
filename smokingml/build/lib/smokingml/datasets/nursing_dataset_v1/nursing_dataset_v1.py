@@ -5,6 +5,8 @@ import numpy as np
 from . import WINSIZE
 from . import dataloading
 
+# Future idea - keep as many sessions in memory as possible
+
 class NursingDatasetV1(Dataset):
     """
         Dataset class to handle the nursingv1_dataset

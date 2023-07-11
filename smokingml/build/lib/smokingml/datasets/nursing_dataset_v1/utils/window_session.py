@@ -26,5 +26,5 @@ def window_session(session):
     ys = torch.cat(ys,axis=1).float()
     zs = torch.cat(zs,axis=1).float()
 
-    X = torch.cat([xs,ys,zs], axis=1).reshape(-1, 3, WINSIZE)
+    X = torch.cat([xs,ys,zs], axis=1)
     return X

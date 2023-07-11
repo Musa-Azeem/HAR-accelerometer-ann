@@ -8,8 +8,6 @@ def load_one_session(dir: Path, session_id: int)  -> tuple[torch.tensor, torch.t
     # Get one unwindowed session from fs and its labels (labels are padded)
 
     # Load session and labels
-    # X = torch.load(dir / f'{session_id}' / 'X.pt')
-    # y = torch.load(dir / f'{session_id}' / 'y.pt')
     X = load_session_from_fs(dir, session_id)
     y = load_labels_from_fs(dir, session_id)
 

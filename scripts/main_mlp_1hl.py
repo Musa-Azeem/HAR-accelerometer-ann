@@ -6,7 +6,7 @@ import time
 from smokingml.utils import get_parser, Colors
 from smokingml.models.mlp_1hl import MLP_1hl
 from smokingml.datasets import SmokingDataset_500ws
-from smokingml.modules import train, test, validate_on_holdouts
+from smokingml.modules.old import train, test, validate_on_holdouts
 
 if __name__=='__main__':
 

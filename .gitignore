@@ -10,3 +10,5 @@ projects
 env
 model
 *.egg-info
+running_loss.jpg
+*cm.jpg
