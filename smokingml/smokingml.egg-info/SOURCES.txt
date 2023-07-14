@@ -34,6 +34,7 @@ smokingml/modules/old/train.py
 smokingml/modules/old/validate_on_holdouts.py
 smokingml/utils/__init__.py
 smokingml/utils/colors.py
+smokingml/utils/get_model.py
 smokingml/utils/get_parser.py
 smokingml/utils/prepare_labels_for_plot.py
 smokingml/utils/print_on_start_and_end.py
