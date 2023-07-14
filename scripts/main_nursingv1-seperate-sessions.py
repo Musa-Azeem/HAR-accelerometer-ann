@@ -10,7 +10,7 @@ from smokingml.utils import get_parser, Colors, get_model, plot_and_save_cm
 from smokingml.datasets.nursing_dataset_v1 import (
     WINSIZE,
     NursingDatasetV1,
-    load_windowed_sessions,
+    nursingv1_train_dev_test_split,    
     utils
 )
 from smokingml.modules import (
@@ -73,12 +73,21 @@ if __name__=='__main__':
         print(f'Error in path to dataset directory - {e}')
         exit(1)
 
+    # Using this api, windows from same sessions are not split between train and dev
     if args.n_sessions > 0:
         session_ids = utils.get_all_session_ids(nursingv1_dir)[:args.n_sessions]
     else:
         session_ids = utils.get_all_session_ids(nursingv1_dir)
-    dataset = load_windowed_sessions(nursingv1_dir, session_ids=session_ids)
-    train_dataset, dev_dataset = utils.train_test_split_windows(dataset, test_size=args.dev_size)
+    
+    
+    train_dataset, dev_dataset, _ = nursingv1_train_dev_test_split(
+        nursingv1_dir,
+        train_size=1-args.dev_size,
+        dev_size=args.dev_size,
+        test_size=0.0,
+        shuffle=True,
+        session_ids=session_ids
+    )
     trainloader = DataLoader(train_dataset, batch_size=args.batch, shuffle=args.shuffle)
     devloader = DataLoader(dev_dataset, batch_size=args.batch, shuffle=args.shuffle)
 

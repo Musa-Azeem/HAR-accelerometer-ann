@@ -9,7 +9,7 @@ def get_parser():
 
     parser.add_argument('-m', '--model', default='mlp_1hl', type=str, help='Model to train')
     parser.add_argument('-P', '--dataset-path', default='data/nursingv1_dataset', type=str, help='Path to nursing v1 dataset')
-    parser.add_argument('-i', '--n-sessions', default=10, type=int, help='Number of sessions from dataset to use')
+    parser.add_argument('-i', '--n-sessions', default=-1, type=int, help='Number of sessions from dataset to use')
     parser.add_argument('-S', '--shuffle', action='store_true', help='Set to shuffle dataset')
     parser.add_argument('-s', '--dev-size', default='0.3', type=float, help='Amount of dataset to use as dev set')
     parser.add_argument('-e', '--epochs', type=int, default=100, help='Number of training epochs')

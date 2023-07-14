@@ -24,26 +24,31 @@ class NursingDatasetV1(Dataset):
         
         ## Get info from session sizes
         
-        # save length of each session in dataset - TODO might be able to replace this with just a sum - dont need to save lengths and rn its useless
-        self._lengths = []
+        # save sum of length of each session in dataset
+        self.length = 0
+        self.sessions = {}
         
         # Save mapping from each possible index to the session that window is in
         self._idx_to_session = []
 
         for session_id in self.session_ids:
-            # Get shape of session from dataset
+            # Read files for this session (shape, data, labels)
             session_shape = torch.load(dir / f'{session_id}' / 'Xshape.pt')
+            X = torch.load(dir / f'{session_id}' / 'X.pt')
+            y = torch.load(dir / f'{session_id}' / 'y.pt')
+
+            # Save session/labels pair
+            self.sessions[session_id] = X,y
             
             # Save number of windows, which is session length - winsize + 1
-            self._lengths.append(session_shape[1] - WINSIZE + 1)
+            lengthi = session_shape[1] - WINSIZE + 1
+            self.length += lengthi
 
             # Save which indices should map to this session as tuple (<session id>, <idx of window in that session>)
-            self._idx_to_session += zip([session_id]*self._lengths[-1], list(range(self._lengths[-1])))
-            # print(session_id, ':', self._idx_to_session[-1], '---', self._lengths[-1])
-
+            self._idx_to_session += zip([session_id]*lengthi, list(range(lengthi)))
 
         # Save random mapping of internal window indices to external indices (for shuffling)
-        self._idxs = list(range(sum(self._lengths)))
+        self._idxs = list(range(self.length))
         if shuffle:
             np.random.shuffle(self._idxs)
         
@@ -62,27 +67,22 @@ class NursingDatasetV1(Dataset):
         # Use random mapping to choose random index
         idx = self._idxs[index]     # Will catch index out of bounds
         x,y = self._get_one_window_and_label(idx)
-        return (x,y)
+        return (x.float(),y.float())
 
     def _get_one_window_and_label(self, idx: int) -> tuple[torch.Tensor]:
         
         # Get the session that this idx is in and the idx within that session
         session_id, window_idx = self._idx_to_session[idx]
 
-        # Read whole session and label files
-        X = torch.load(self.dir / f'{session_id}' / 'X.pt')
-        y = torch.load(self.dir / f'{session_id}' / 'y.pt')
-        # print(session_id, window_idx, X.shape[1] - WINSIZE +1)
-
         # Window session starting at window_idx
-        window = X[:, window_idx:window_idx+WINSIZE]
-        label = y[window_idx]
+        window = self.sessions[session_id][0][:, window_idx:window_idx+WINSIZE]
+        label = self.sessions[session_id][1][window_idx]
 
         return (window, label)
-
+    
     def __len__(self) -> int:
         # Total number of windows in every session is length of dataset
-        return sum(self._lengths)
+        return self.length
 
     def load_one_session(self, session_id: int) -> tuple[torch.Tensor, torch.Tensor]:
         # Get one unwindowed session from session_ids and its labels (labels are padded)

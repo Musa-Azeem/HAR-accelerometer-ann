@@ -21,10 +21,11 @@ def get_model(args: argparse.Namespace, device) -> tuple[nn.Module, torch.optim.
     """
 
     if args.model == 'mlp_1hl':
-        # try:
-        model = MLP_1hl(n_hl=10, n_features=303).to(device)
-        # except:
-        #     return (None, None, None, None)
+        try:
+            model = MLP_1hl(n_hl=10, n_features=303).to(device)
+        except Exception as e:
+            print(e)
+            return (None, None, None, None)
         
         optimizer = MLP_1hl.get_optimizer(model)
         criterion = MLP_1hl.get_criterion()

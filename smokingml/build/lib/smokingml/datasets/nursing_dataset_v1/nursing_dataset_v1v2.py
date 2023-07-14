@@ -7,7 +7,7 @@ from . import dataloading
 
 # Future idea - keep as many sessions in memory as possible
 
-class NursingDatasetV1(Dataset):
+class NursingDatasetV1V2(Dataset):
     """
         Dataset class to handle the nursingv1_dataset
     """
@@ -38,7 +38,7 @@ class NursingDatasetV1(Dataset):
             y = torch.load(dir / f'{session_id}' / 'y.pt')
 
             # Save session/labels pair
-            self.sessions[session_id] = X,y
+            self.sessions[session_id] = (X,y)
             
             # Save number of windows, which is session length - winsize + 1
             lengthi = session_shape[1] - WINSIZE + 1
@@ -67,12 +67,17 @@ class NursingDatasetV1(Dataset):
         # Use random mapping to choose random index
         idx = self._idxs[index]     # Will catch index out of bounds
         x,y = self._get_one_window_and_label(idx)
-        return (x.float(),y.float())
+        return (x,y)
 
     def _get_one_window_and_label(self, idx: int) -> tuple[torch.Tensor]:
         
         # Get the session that this idx is in and the idx within that session
         session_id, window_idx = self._idx_to_session[idx]
+
+        # Read whole session and label files
+        # X = torch.load(self.dir / f'{session_id}' / 'X.pt')
+        # y = torch.load(self.dir / f'{session_id}' / 'y.pt')
+        # print(session_id, window_idx, X.shape[1] - WINSIZE +1)
 
         # Window session starting at window_idx
         window = self.sessions[session_id][0][:, window_idx:window_idx+WINSIZE]

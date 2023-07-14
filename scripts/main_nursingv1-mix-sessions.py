@@ -73,6 +73,7 @@ if __name__=='__main__':
         print(f'Error in path to dataset directory - {e}')
         exit(1)
 
+    # Using this api, the windows from each session are mixed across train and dev
     if args.n_sessions > 0:
         session_ids = utils.get_all_session_ids(nursingv1_dir)[:args.n_sessions]
     else:

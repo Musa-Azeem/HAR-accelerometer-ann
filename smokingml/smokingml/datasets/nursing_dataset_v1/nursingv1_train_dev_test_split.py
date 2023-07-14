@@ -10,7 +10,7 @@ def nursingv1_train_dev_test_split(
         test_size: float,
         shuffle: bool = False,
         session_ids: list[int] = None
-    ) -> tuple:
+    ) -> tuple[NursingDatasetV1, NursingDatasetV1, NursingDatasetV1]:
         """
             Creates and returns three NursingDatasetV1 objects for train,
                 dev, and test purposes. Each of the three objects are given
@@ -24,6 +24,9 @@ def nursingv1_train_dev_test_split(
             dev_size (float): percent of sessions for dev dataset
             test_size (float): percent of sessions for test dataset
             shuffle (bool, optional): shuffle dataset before split. Defaults to False.
+            session_ids (list[int], optional): list of session ids to use during this
+                train, dev, test split. If not specified, all session ids are used. Defaults
+                to None
 
         Returns:
             tuple: Three NursingDatasetV1 objects (train, dev, test)

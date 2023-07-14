@@ -1,10 +1,9 @@
 import matplotlib.pyplot as plt
 import torch
-from typing import List
 
 def plot_and_save_losses(
-    train_losses: List[float], 
-    test_losses: List[float], 
+    train_losses: list[float], 
+    test_losses: list[float], 
     n_epochs: int,
     filename: str
 ) -> None:
