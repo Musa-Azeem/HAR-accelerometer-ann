@@ -17,6 +17,7 @@ from smokingml.modules import (
     optimization_loop,
     evaluate_loop
 )
+import sys
 
 if __name__=='__main__':
 
@@ -32,6 +33,7 @@ if __name__=='__main__':
 
     # Save config information for this session
     config = {
+        'run-command': str(sys.argv),
         'date': date,
         'model': args.model,
         'dataset': 'Nursing v1',
@@ -67,17 +69,17 @@ if __name__=='__main__':
     json.dump(config, open(f'{outdir}/config.json', 'w'), indent=4)
 
     # Get dataset
+    nursingv1_dir = Path(args.dataset_path)
+
     try:
-        nursingv1_dir = Path(args.dataset_path)
-    except Exception as e:
+        if args.n_sessions > 0:
+            session_ids = utils.get_all_session_ids(nursingv1_dir)[:args.n_sessions]
+        else:
+            session_ids = utils.get_all_session_ids(nursingv1_dir)
+    except FileNotFoundError as e:
         print(f'Error in path to dataset directory - {e}')
         exit(1)
-
-    # Using this api, the windows from each session are mixed across train and dev
-    if args.n_sessions > 0:
-        session_ids = utils.get_all_session_ids(nursingv1_dir)[:args.n_sessions]
-    else:
-        session_ids = utils.get_all_session_ids(nursingv1_dir)
+    
     dataset = load_windowed_sessions(nursingv1_dir, session_ids=session_ids)
     train_dataset, dev_dataset = utils.train_test_split_windows(dataset, test_size=args.dev_size)
     trainloader = DataLoader(train_dataset, batch_size=args.batch, shuffle=args.shuffle)

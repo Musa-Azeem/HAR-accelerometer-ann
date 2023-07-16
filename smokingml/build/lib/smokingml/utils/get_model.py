@@ -25,7 +25,7 @@ def get_model(args: argparse.Namespace, device) -> tuple[nn.Module, torch.optim.
             model = MLP_1hl(n_hl=10, n_features=303).to(device)
         except Exception as e:
             print(e)
-            return (None, None, None, None)
+            return tuple([None]*4)
         
         optimizer = MLP_1hl.get_optimizer(model)
         criterion = MLP_1hl.get_criterion()
@@ -34,4 +34,4 @@ def get_model(args: argparse.Namespace, device) -> tuple[nn.Module, torch.optim.
         return (model, optimizer, criterion, is_cnn)
 
     else:
-        return (None, None, None, None)
+        return tuple([None]*4)

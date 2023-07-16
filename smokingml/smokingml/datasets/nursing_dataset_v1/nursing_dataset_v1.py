@@ -12,12 +12,18 @@ class NursingDatasetV1(Dataset):
         Dataset class to handle the nursingv1_dataset
     """
 
-    def __init__(self, dir: Path, session_ids: list[int], shuffle: bool = False) -> None:
+    def __init__(
+            self, dir: Path, 
+            session_ids: list[int], 
+            shuffle: bool = False, 
+            for_cnn: bool = False,
+        ) -> None:
         super().__init__()
 
         # Public attributes
         self.dir = dir
         self.session_ids = session_ids
+        self.for_cnn = for_cnn
 
         # Private attributes
         self._shuffle = shuffle
@@ -67,9 +73,14 @@ class NursingDatasetV1(Dataset):
         # Use random mapping to choose random index
         idx = self._idxs[index]     # Will catch index out of bounds
         x,y = self._get_one_window_and_label(idx)
+
+        # If this dataset is not being used for cnn, flatten windows
+        if not self.for_cnn:
+            x,y = x.flatten(),y.flatten()
+        
         return (x.float(),y.float())
 
-    def _get_one_window_and_label(self, idx: int) -> tuple[torch.Tensor]:
+    def _get_one_window_and_label(self, idx: int) -> tuple[torch.tensor, torch.tensor]:
         
         # Get the session that this idx is in and the idx within that session
         session_id, window_idx = self._idx_to_session[idx]

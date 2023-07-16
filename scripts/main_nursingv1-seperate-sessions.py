@@ -17,6 +17,7 @@ from smokingml.modules import (
     optimization_loop,
     evaluate_loop
 )
+import sys
 
 if __name__=='__main__':
 
@@ -32,6 +33,7 @@ if __name__=='__main__':
 
     # Save config information for this session
     config = {
+        'run-command': str(sys.argv),
         'date': date,
         'model': args.model,
         'dataset': 'Nursing v1',
@@ -63,30 +65,30 @@ if __name__=='__main__':
 
     # Create directory for results
     outdir = Path(args.project) / f'{date}'
-    outdir.mkdir(exist_ok=True)
+    outdir.mkdir(parents=True, exist_ok=True)
     json.dump(config, open(f'{outdir}/config.json', 'w'), indent=4)
 
     # Get dataset
+    nursingv1_dir = Path(args.dataset_path)
+
     try:
-        nursingv1_dir = Path(args.dataset_path)
-    except Exception as e:
+        if args.n_sessions > 0:
+            session_ids = utils.get_all_session_ids(nursingv1_dir)[:args.n_sessions]
+        else:
+            session_ids = utils.get_all_session_ids(nursingv1_dir)
+    except FileNotFoundError as e:
         print(f'Error in path to dataset directory - {e}')
         exit(1)
-
-    # Using this api, windows from same sessions are not split between train and dev
-    if args.n_sessions > 0:
-        session_ids = utils.get_all_session_ids(nursingv1_dir)[:args.n_sessions]
-    else:
-        session_ids = utils.get_all_session_ids(nursingv1_dir)
     
-    
+    # Using this api to dataset will split train and dev by session
     train_dataset, dev_dataset, _ = nursingv1_train_dev_test_split(
         nursingv1_dir,
         train_size=1-args.dev_size,
         dev_size=args.dev_size,
         test_size=0.0,
-        shuffle=True,
-        session_ids=session_ids
+        shuffle=args.shuffle,
+        session_ids=session_ids,
+        for_cnn=is_cnn
     )
     trainloader = DataLoader(train_dataset, batch_size=args.batch, shuffle=args.shuffle)
     devloader = DataLoader(dev_dataset, batch_size=args.batch, shuffle=args.shuffle)
