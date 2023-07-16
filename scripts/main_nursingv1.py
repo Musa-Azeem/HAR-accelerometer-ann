@@ -65,7 +65,7 @@ if __name__=='__main__':
 
     # Create directory for results
     outdir = Path(args.project) / f'{date}'
-    outdir.mkdir(exist_ok=True)
+    outdir.mkdir(parents=True, exist_ok=True)
     json.dump(config, open(f'{outdir}/config.json', 'w'), indent=4)
 
     # Get dataset
