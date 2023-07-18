@@ -1,7 +1,7 @@
 import torch
 from .. import WINSIZE
 
-def window_session(session):
+def window_session(session: torch.Tensor) -> torch.Tensor:
     # Window session
     x_acc = session[0].reshape(-1, 1)
     y_acc = session[1].reshape(-1, 1)

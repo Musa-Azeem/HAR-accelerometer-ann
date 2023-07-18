@@ -1,5 +1,4 @@
 from .window_session import window_session
-from .window_session_for_conv import window_session_for_conv
 from .load_labels_from_fs import load_labels_from_fs
 from .load_session_from_fs import load_session_from_fs
 from .get_all_session_ids import get_all_session_ids

@@ -4,7 +4,10 @@ import argparse
 from smokingml.models import MLP_1hl
 
 
-def get_model(args: argparse.Namespace, device) -> tuple[nn.Module, torch.optim.Optimizer, nn.Module, bool]:
+def get_model(
+    args: argparse.Namespace, 
+    device
+) -> tuple[nn.Module, torch.optim.Optimizer, nn.Module]:
     """
         Returns the model corrosponding with the given name
         Also returns whether or not this model requires input
@@ -17,7 +20,8 @@ def get_model(args: argparse.Namespace, device) -> tuple[nn.Module, torch.optim.
 
     Returns:
         nn.Module: instance of model
-        bool: whether or not this model is a cnn
+        torch.optim.Optimizer: optimizer to use with this model
+        nn.Module: criterion to use with this model
     """
 
     if args.model == 'mlp_1hl':
@@ -29,9 +33,8 @@ def get_model(args: argparse.Namespace, device) -> tuple[nn.Module, torch.optim.
         
         optimizer = MLP_1hl.get_optimizer(model)
         criterion = MLP_1hl.get_criterion()
-        is_cnn = False
 
-        return (model, optimizer, criterion, is_cnn)
+        return (model, optimizer, criterion)
 
     else:
-        return tuple([None]*4)
+        return tuple([None]*3)

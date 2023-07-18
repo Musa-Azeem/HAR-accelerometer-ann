@@ -4,7 +4,7 @@ import numpy as np
 from .. import WINSIZE
 from ..utils import load_labels_from_fs, load_session_from_fs
 
-def load_one_session(dir: Path, session_id: int)  -> tuple[torch.tensor, torch.tensor]:
+def load_one_session(dir: Path, session_id: int)  -> tuple[torch.Tensor, torch.Tensor]:
     # Get one unwindowed session from fs and its labels (labels are padded)
 
     # Load session and labels
