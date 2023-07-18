@@ -9,8 +9,7 @@ def nursingv1_train_dev_test_split(
         dev_size: float, 
         test_size: float,
         shuffle: bool = False,
-        session_ids: list[int] = None,
-        for_cnn: bool = False
+        session_ids: list[int] = None
     ) -> tuple[NursingDatasetV1, NursingDatasetV1, NursingDatasetV1]:
         """
             Creates and returns three NursingDatasetV1 objects for train,
@@ -62,7 +61,7 @@ def nursingv1_train_dev_test_split(
         )
 
         return (
-            NursingDatasetV1(dir, train_ids, shuffle, for_cnn),
-            NursingDatasetV1(dir, dev_ids, shuffle, for_cnn),
-            NursingDatasetV1(dir, test_ids, shuffle, for_cnn)
+            NursingDatasetV1(dir, train_ids, shuffle),
+            NursingDatasetV1(dir, dev_ids, shuffle),
+            NursingDatasetV1(dir, test_ids, shuffle)
         )

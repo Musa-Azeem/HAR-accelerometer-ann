@@ -27,7 +27,10 @@ smokingml/models/__init__.py
 smokingml/models/mlp_1hl.py
 smokingml/modules/__init__.py
 smokingml/modules/evaluate_loop.py
+smokingml/modules/inner_evaluate_loop.py
+smokingml/modules/inner_train_loop.py
 smokingml/modules/optimization_loop.py
+smokingml/modules/train_loop.py
 smokingml/modules/old/__init__.py
 smokingml/modules/old/test.py
 smokingml/modules/old/train.py
@@ -43,4 +46,5 @@ smokingml/utils/dataloading/load_sessions_by_idxs.py
 smokingml/utils/plot_utils/__init__.py
 smokingml/utils/plot_utils/plot_and_save_cm.py
 smokingml/utils/plot_utils/plot_and_save_holdout.py
+smokingml/utils/plot_utils/plot_and_save_loss.py
 smokingml/utils/plot_utils/plot_and_save_losses.py

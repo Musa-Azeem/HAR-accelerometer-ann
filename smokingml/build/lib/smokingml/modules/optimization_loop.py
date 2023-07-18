@@ -4,11 +4,12 @@ from torch import nn
 from tqdm import tqdm
 import matplotlib.pyplot as plt
 from pathlib import Path
+from . import inner_train_loop, inner_evaluate_loop
 from ..utils import plot_and_save_losses, print_on_start_and_end
 
 @print_on_start_and_end
 def optimization_loop(
-    model: any,
+    model: nn.Module,
     trainloader: DataLoader,
     devloader: DataLoader,
     criterion: nn.Module,
@@ -28,35 +29,12 @@ def optimization_loop(
     for epoch in pbar:
 
         # Train Loop
-        model.train()
-        train_loss_sum = 0
-        for Xtr,ytr in trainloader:
-            Xtr,ytr = Xtr.to(device),ytr.to(device)
-
-            # Forward pass
-            logits = model(Xtr)
-            loss = criterion(logits, ytr)
-
-            # Backward pass
-            optimizer.zero_grad()
-            loss.backward()
-            optimizer.step()
-
-            train_loss_sum += loss.item()
-        
-        train_loss.append(train_loss_sum / len(trainloader))
+        train_lossi = inner_train_loop(model, trainloader, criterion, optimizer, device)
+        train_loss.append(sum(train_lossi) / len(trainloader))
 
         # Dev Loop
-        model.eval()
-        dev_loss_sum = 0
-        for Xdev,ydev in devloader:
-            Xdev,ydev = Xdev.to(device),ydev.to(device)
-
-            # Forward pass
-            logits = model(Xdev)
-            dev_loss_sum += criterion(logits, ydev).item()
-
-        dev_loss.append(dev_loss_sum / len(devloader))
+        y_true, y_pred, dev_lossi = inner_evaluate_loop(model, devloader, criterion, device)
+        dev_loss.append(sum(dev_lossi) / len(devloader))
 
         pbar.set_description(f'Epoch {epoch}: Train Loss: {train_loss[-1]:.5}: Dev Loss: {dev_loss[-1]:.5}')
 
