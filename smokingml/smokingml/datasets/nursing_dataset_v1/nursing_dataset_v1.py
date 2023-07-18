@@ -16,14 +16,12 @@ class NursingDatasetV1(Dataset):
             self, dir: Path, 
             session_ids: list[int], 
             shuffle: bool = False, 
-            for_cnn: bool = False,
         ) -> None:
         super().__init__()
 
         # Public attributes
         self.dir = dir
         self.session_ids = session_ids
-        self.for_cnn = for_cnn
 
         # Private attributes
         self._shuffle = shuffle
@@ -74,9 +72,8 @@ class NursingDatasetV1(Dataset):
         idx = self._idxs[index]     # Will catch index out of bounds
         x,y = self._get_one_window_and_label(idx)
 
-        # If this dataset is not being used for cnn, flatten windows
-        if not self.for_cnn:
-            x,y = x.flatten(),y.flatten()
+        # Flatten windows
+        x,y = x.flatten(),y.flatten()
         
         return (x.float(),y.float())
 

@@ -51,7 +51,7 @@ if __name__=='__main__':
     print(f'Using {device} device')
 
     # Instantiate model
-    model,optimizer,criterion,is_cnn = get_model(args, device)
+    model,optimizer,criterion = get_model(args, device)
     if not model:
         print(f'No model of name {args.model} or not all args provided')
         exit(1)
@@ -87,8 +87,7 @@ if __name__=='__main__':
         dev_size=args.dev_size,
         test_size=0.0,
         shuffle=args.shuffle,
-        session_ids=session_ids,
-        for_cnn=is_cnn
+        session_ids=session_ids
     )
     trainloader = DataLoader(train_dataset, batch_size=args.batch, shuffle=args.shuffle)
     devloader = DataLoader(dev_dataset, batch_size=args.batch, shuffle=args.shuffle)
@@ -107,8 +106,9 @@ if __name__=='__main__':
         )
 
     # Test Model
-    y_true_dev, y_pred_dev = evaluate_loop(
+    y_true_dev, y_pred_dev, test_loss = evaluate_loop(
         model=model,
+        criterion=criterion,
         loader=devloader,
         device=device
     )
