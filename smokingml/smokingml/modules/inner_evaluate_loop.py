@@ -7,7 +7,7 @@ def inner_evaluate_loop(
     devloader: DataLoader,
     criterion: nn.Module,
     device: str
-) -> tuple[torch.tensor, torch.tensor, list[float]]:
+) -> tuple[torch.Tensor, torch.Tensor, list[float]]:
 
     y_preds = []
     y_true = []

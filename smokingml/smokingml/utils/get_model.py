@@ -4,7 +4,10 @@ import argparse
 from smokingml.models import MLP_1hl
 
 
-def get_model(args: argparse.Namespace, device) -> tuple[nn.Module, torch.optim.Optimizer, nn.Module]:
+def get_model(
+    args: argparse.Namespace, 
+    device
+) -> tuple[nn.Module, torch.optim.Optimizer, nn.Module]:
     """
         Returns the model corrosponding with the given name
         Also returns whether or not this model requires input

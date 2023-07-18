@@ -29,7 +29,7 @@ class FCN(nn.Module):
         self.output = nn.Linear(in_features=128, out_features=1)
     
     def forward(self, x: torch.Tensor) -> torch.Tensor:
-        x = x.reshape(-1, self.in_channels, self.winsize / self.in_channels)
+        x = x.reshape(-1, self.in_channels, self.winsize)
 
         x = self.conv1(x)
         x = self.bn1(x)
