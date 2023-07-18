@@ -2,11 +2,13 @@ from torch import nn
 import torch
 
 class FCN(nn.Module):
-    def __init__(self):
+    def __init__(self, in_channels: int, winsize: int):
         super().__init__()
+        self.winsize = winsize
+        self.in_channels = in_channels
         
         # First Convolution Block
-        self.conv1 = nn.Conv1d(in_channels=3, out_channels=128, kernel_size=8)
+        self.conv1 = nn.Conv1d(in_channels=in_channels, out_channels=128, kernel_size=8)
         self.bn1 = nn.BatchNorm1d(num_features=128)
         self.relu1 = nn.ReLU()
 
@@ -26,8 +28,8 @@ class FCN(nn.Module):
         # Output Later
         self.output = nn.Linear(in_features=128, out_features=1)
     
-    def forward(self, x):
-        x = x.reshape(-1, 3, 101)
+    def forward(self, x: torch.Tensor) -> torch.Tensor:
+        x = x.reshape(-1, self.in_channels, self.winsize / self.in_channels)
 
         x = self.conv1(x)
         x = self.bn1(x)

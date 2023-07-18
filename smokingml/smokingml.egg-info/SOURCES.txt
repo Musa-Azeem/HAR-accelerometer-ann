@@ -24,6 +24,8 @@ smokingml/datasets/nursing_dataset_v1/utils/train_test_split_windows.py
 smokingml/datasets/nursing_dataset_v1/utils/window_session.py
 smokingml/datasets/nursing_dataset_v1/utils/window_session_for_conv.py
 smokingml/models/__init__.py
+smokingml/models/cnn.py
+smokingml/models/fcn.py
 smokingml/models/mlp_1hl.py
 smokingml/modules/__init__.py
 smokingml/modules/evaluate_loop.py

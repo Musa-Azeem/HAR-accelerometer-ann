@@ -14,4 +14,5 @@ def print_on_start_and_end(func: Callable[P, T]) -> Callable[P, T]:
         end = time.time()
         print(f'{Colors.WARNING}Finished {func.__name__}. Elapsed time: {end-start:.3f}{Colors.ENDC}')
         return ret
+    
     return wrapper
