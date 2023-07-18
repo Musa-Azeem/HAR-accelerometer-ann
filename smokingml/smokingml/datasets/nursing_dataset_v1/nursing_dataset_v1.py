@@ -13,7 +13,8 @@ class NursingDatasetV1(Dataset):
     """
 
     def __init__(
-            self, dir: Path, 
+            self, 
+            dir: Path, 
             session_ids: list[int], 
             shuffle: bool = False, 
         ) -> None:
