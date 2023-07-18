@@ -1,8 +1,8 @@
-matplotlib
+torch
 numpy
 pandas
-scikit-learn
-seaborn
-tabulate
-torch
 tqdm
+tabulate
+seaborn
+scikit-learn
+matplotlib
