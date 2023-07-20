@@ -2,10 +2,13 @@ import torch
 from .. import WINSIZE
 
 def window_session(session: torch.Tensor) -> torch.Tensor:
+    # Input shape: L x 3
+    # Output shape: L x 3*WINSIZE
+
     # Window session
-    x_acc = session[0].reshape(-1, 1)
-    y_acc = session[1].reshape(-1, 1)
-    z_acc = session[2].reshape(-1, 1)
+    x_acc = session[:,0].unsqueeze(1)
+    y_acc = session[:,1].unsqueeze(1)
+    z_acc = session[:,2].unsqueeze(1)
 
     w = WINSIZE-1
 

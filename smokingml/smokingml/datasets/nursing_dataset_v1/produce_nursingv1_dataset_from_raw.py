@@ -6,17 +6,17 @@ from tqdm import tqdm
 import json
 
 def produce_nursingv1_dataset_from_raw(
-    data_dir: Path, 
-    labels_dir: Path, 
-    nursingv1_outdir: Path,
+    data_dir: str, 
+    labels_dir: str, 
+    nursingv1_outdir: str,
     win_size: int = 101,
     dm_factor: int = 5
 ):
-    # data_dir = Path(working_dir / 'nursing_raw')
-    # labels_dir = Path(working_dir / 'nursing_labels_musa')
-    # nursingv1_outdir = Path(working_dir / 'nursingv1_dataset')
-    nursingv1_outdir.mkdir()
+    data_dir = Path(data_dir)
+    labels_dir = Path(labels_dir)
+    nursingv1_outdir = Path(nursingv1_outdir)
 
+    nursingv1_outdir.mkdir()
     # ---------------------- Read Labels -----------------------------
     # Read json labels and get list of which sessions are labelled
 
@@ -55,26 +55,27 @@ def produce_nursingv1_dataset_from_raw(
 
         # Convert data to torch tensor, with x,y,z as rows and each 
         # datapoint as columns
-        X = torch.tensor(data_df.values).T  # Shape: 3 by len(session)
+        X = torch.tensor(data_df.values)  # Shape: len(session) by 3
 
         # Pad session so that there will be len(session) windows after 
         # windowing
-        X = nn.functional.pad(X, (win_size//2, win_size//2), 'constant', 0)
+        X = nn.functional.pad(X, (0,0,win_size//2,win_size//2))
 
         ## Get y from json labels
-        y = torch.zeros(len(X[0]) - WINSIZE + 1).reshape([-1,1])   
+        y = torch.zeros(len(X) - (win_size - 1), 1)
         for puff in y_json['puffs']:
 
             # Get start and stop of puff, in same frequency as data
-            puff_start = puff['start'] // DM_FACTOR
-            puff_end = puff['end'] // DM_FACTOR
+            puff_start = puff['start'] // dm_factor
+            puff_end = puff['end'] // dm_factor
 
             # All windows whose center is within puff get y of 1
-            # All windows `WINSIZE//2` before start and end have a center within puff
-            puff_start_idx = max(puff_start - WINSIZE//2, 0)
-            puff_end_idx = max(puff_end - WINSIZE//2, 0)
+            # If index of this window is within range(start, end), then its 
+            # center point is within the original puff (before padding)
+
+            puff_start_idx = max(puff_start, 0)
+            puff_end_idx = max(puff_end, 0)
             y[puff_start_idx:puff_end_idx] = 1
-        
         
         ## Save X and y in dataset
         session_outdir = nursingv1_outdir / f'{session_idx}'
@@ -83,17 +84,3 @@ def produce_nursingv1_dataset_from_raw(
         # Save X and y
         torch.save(X, session_outdir / 'X.pt')
         torch.save(y, session_outdir / 'y.pt')
-        
-        # Save size of session
-        torch.save(X.shape, session_outdir / 'Xshape.pt')
-
-        # Save X of each session in files of size 5000 for less file overhead
-        # for i in range(0, len(X[0], 5000)):
-        #     end_idx = min(len(X[0:], )
-        #     torch.save(
-        #         X[]
-        #     )
-        # torch.save(
-        #     TensorDataset(X,y),
-        #     f'{len(X[0])}.pt'       # use length of session as filename
-        # )

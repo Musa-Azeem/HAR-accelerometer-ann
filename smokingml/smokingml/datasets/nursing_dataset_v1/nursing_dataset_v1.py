@@ -38,7 +38,6 @@ class NursingDatasetV1(Dataset):
 
         for session_id in self.session_ids:
             # Read files for this session (shape, data, labels)
-            session_shape = torch.load(dir / f'{session_id}' / 'Xshape.pt')
             X = torch.load(dir / f'{session_id}' / 'X.pt')
             y = torch.load(dir / f'{session_id}' / 'y.pt')
 
@@ -46,7 +45,7 @@ class NursingDatasetV1(Dataset):
             self.sessions[session_id] = X,y
             
             # Save number of windows, which is session length - winsize + 1
-            lengthi = session_shape[1] - WINSIZE + 1
+            lengthi = X.shape[0] - WINSIZE + 1
             self.length += lengthi
 
             # Save which indices should map to this session as tuple (<session id>, <idx of window in that session>)
@@ -74,7 +73,7 @@ class NursingDatasetV1(Dataset):
         x,y = self._get_one_window_and_label(idx)
 
         # Flatten windows
-        x,y = x.flatten(),y.flatten()
+        x,y = x.T.flatten(),y.flatten()
         
         return (x.float(),y.float())
 
@@ -84,7 +83,7 @@ class NursingDatasetV1(Dataset):
         session_id, window_idx = self._idx_to_session[idx]
 
         # Window session starting at window_idx
-        window = self.sessions[session_id][0][:, window_idx:window_idx+WINSIZE]
+        window = self.sessions[session_id][0][window_idx:window_idx+WINSIZE]
         label = self.sessions[session_id][1][window_idx]
 
         return (window, label)
@@ -94,7 +93,7 @@ class NursingDatasetV1(Dataset):
         return self.length
 
     def load_one_session(self, session_id: int) -> tuple[torch.Tensor, torch.Tensor]:
-        # Get one unwindowed session from session_ids and its labels (labels are padded)
+        # Get one unwindowed session (padded) from session_ids and its labels
         # Only return session if it is a part of this dataset
 
         if session_id not in self.session_ids:
@@ -104,13 +103,17 @@ class NursingDatasetV1(Dataset):
         return dataloading.load_one_session(self.dir, session_id)
 
     def load_all_sessions(self) -> list[tuple[torch.Tensor, torch.Tensor]]:
-        # return list of all unwindowed sessions and their labels in this dataset
+        # return list of all unwindowed sessions (padded) and their labels in this dataset
         return dataloading.load_sessions(self.dir, self.session_ids)
 
-    def load_one_windowed_session(self, id) -> TensorDataset:
+    def load_one_windowed_session(self, session_id) -> TensorDataset:
         # Return one windowed session and its labels as tensor dataset
-        return dataloading.load_one_windowed_session(self.dir, id)
+        if session_id not in self.session_ids:
+            print("Error: Session id not a part of this dataset")
+            return None
+
+        return dataloading.load_one_windowed_session(self.dir, session_id)
 
     def load_all_windowed_sessions(self) -> list[TensorDataset]:
         # Return all windowed sessions and their labels as list of tensor datasets
-        pass
+        return dataloading.load_windowed_sessions(self.dir, self.session_ids)
