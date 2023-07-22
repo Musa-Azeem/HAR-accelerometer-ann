@@ -36,5 +36,18 @@ def get_model(
 
         return (model, optimizer, criterion)
 
+    elif args.model == 'cnnlstm':
+        try:
+            model = MLP_1hl(winsize = 101).to(device)
+        except Exception as e:
+            print(e)
+            return tuple([None]*4)
+        
+        optimizer = MLP_1hl.get_optimizer(model)
+        criterion = MLP_1hl.get_criterion()
+
+        return (model, optimizer, criterion)
+
+
     else:
         return tuple([None]*3)
