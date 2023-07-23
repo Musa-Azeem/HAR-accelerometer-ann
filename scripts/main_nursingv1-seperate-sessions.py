@@ -1,4 +1,4 @@
-#!/usr/bin/python3
+#!/usr/bin/env python3
 
 import torch
 from datetime import datetime
@@ -109,7 +109,7 @@ if __name__=='__main__':
     y_true_dev, y_pred_dev, test_loss = evaluate_loop(
         model=model,
         criterion=criterion,
-        loader=devloader,
+        devloader=devloader,
         device=device
     )
     y_true_dev,y_pred_dev = y_true_dev.flatten(), y_pred_dev.flatten()

@@ -31,5 +31,5 @@ class CNNLSTM(nn.Module):
         return torch.optim.Adam(model.parameters(), lr=3e-4)
 
     @staticmethod
-    def get_critersion():
+    def get_criterion():
         return nn.BCEWithLogitsLoss()

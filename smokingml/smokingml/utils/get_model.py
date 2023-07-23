@@ -1,7 +1,7 @@
 from torch import nn
 import torch
 import argparse
-from smokingml.models import MLP_1hl
+from smokingml.models import MLP_1hl, CNNLSTM
 
 
 def get_model(
@@ -23,13 +23,12 @@ def get_model(
         torch.optim.Optimizer: optimizer to use with this model
         nn.Module: criterion to use with this model
     """
-
     if args.model == 'mlp_1hl':
         try:
             model = MLP_1hl(n_hl=10, n_features=303).to(device)
         except Exception as e:
             print(e)
-            return tuple([None]*4)
+            return tuple([None]*3)
         
         optimizer = MLP_1hl.get_optimizer(model)
         criterion = MLP_1hl.get_criterion()
@@ -38,13 +37,13 @@ def get_model(
 
     elif args.model == 'cnnlstm':
         try:
-            model = MLP_1hl(winsize = 101).to(device)
+            model = CNNLSTM(winsize = 101).to(device)
         except Exception as e:
             print(e)
-            return tuple([None]*4)
+            return tuple([None]*3)
         
-        optimizer = MLP_1hl.get_optimizer(model)
-        criterion = MLP_1hl.get_criterion()
+        optimizer = CNNLSTM.get_optimizer(model)
+        criterion = CNNLSTM.get_criterion()
 
         return (model, optimizer, criterion)
 
