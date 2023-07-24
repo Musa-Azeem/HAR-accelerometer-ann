@@ -2,7 +2,6 @@ import torch
 from torch.utils.data import Dataset, TensorDataset
 from pathlib import Path
 import numpy as np
-from . import WINSIZE
 from . import dataloading
 
 # Future idea - keep as many sessions in memory as possible
@@ -16,6 +15,7 @@ class NursingDatasetV1(Dataset):
             self, 
             dir: Path, 
             session_ids: list[int], 
+            winsize: int,
             shuffle: bool = False, 
         ) -> None:
         super().__init__()
@@ -23,6 +23,7 @@ class NursingDatasetV1(Dataset):
         # Public attributes
         self.dir = dir
         self.session_ids = session_ids
+        self.winsize = winsize
 
         # Private attributes
         self._shuffle = shuffle
@@ -45,7 +46,7 @@ class NursingDatasetV1(Dataset):
             self.sessions[session_id] = X,y
             
             # Save number of windows, which is session length - winsize + 1
-            lengthi = X.shape[0] - WINSIZE + 1
+            lengthi = X.shape[0] - self.winsize + 1
             self.length += lengthi
 
             # Save which indices should map to this session as tuple (<session id>, <idx of window in that session>)
@@ -83,7 +84,7 @@ class NursingDatasetV1(Dataset):
         session_id, window_idx = self._idx_to_session[idx]
 
         # Window session starting at window_idx
-        window = self.sessions[session_id][0][window_idx:window_idx+WINSIZE]
+        window = self.sessions[session_id][0][window_idx:window_idx+self.winsize]
         label = self.sessions[session_id][1][window_idx]
 
         return (window, label)
@@ -112,8 +113,8 @@ class NursingDatasetV1(Dataset):
             print("Error: Session id not a part of this dataset")
             return None
 
-        return dataloading.load_one_windowed_session(self.dir, session_id)
+        return dataloading.load_one_windowed_session(self.dir, session_id, self.winsize)
 
     def load_all_windowed_sessions(self) -> list[TensorDataset]:
         # Return all windowed sessions and their labels as list of tensor datasets
-        return dataloading.load_windowed_sessions(self.dir, self.session_ids)
+        return dataloading.load_windowed_sessions(self.dir, self.winsize, self.session_ids)

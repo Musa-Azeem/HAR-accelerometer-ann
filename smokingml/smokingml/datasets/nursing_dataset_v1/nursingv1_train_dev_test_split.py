@@ -8,6 +8,7 @@ def nursingv1_train_dev_test_split(
         train_size: float, 
         dev_size: float, 
         test_size: float,
+        winsize: int,
         shuffle: bool = False,
         session_ids: list[int] = None
     ) -> tuple[NursingDatasetV1, NursingDatasetV1, NursingDatasetV1]:
@@ -61,7 +62,7 @@ def nursingv1_train_dev_test_split(
         )
 
         return (
-            NursingDatasetV1(dir, train_ids, shuffle),
-            NursingDatasetV1(dir, dev_ids, shuffle),
-            NursingDatasetV1(dir, test_ids, shuffle)
+            NursingDatasetV1(dir, train_ids, winsize, shuffle),
+            NursingDatasetV1(dir, dev_ids, winsize, shuffle),
+            NursingDatasetV1(dir, test_ids, winsize, shuffle)
         )

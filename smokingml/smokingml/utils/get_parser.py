@@ -19,5 +19,6 @@ def get_parser():
     parser.add_argument('-p', '--project', type=str, default=f'nursingv1_projects', help='Project directory to save results')
     parser.add_argument('-t', '--test', action='store_true', help='Set to true if only testing a model, not training')
     parser.add_argument('-T', '--testmodel', type=str, default=None, help='Path to model to test, ignored if --test is False, required if --test is True')
+    parser.add_argument('-w', '--winsize', type=int, default=101, help='Window size of dataset')
 
     return parser

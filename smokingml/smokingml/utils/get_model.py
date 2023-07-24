@@ -1,7 +1,7 @@
 from torch import nn
 import torch
 import argparse
-from smokingml.models import MLP_1hl, CNNLSTM
+from ..models import MLP_1hl, CNNLSTM, ResNetLSTM
 
 
 def get_model(
@@ -37,7 +37,7 @@ def get_model(
 
     elif args.model == 'cnnlstm':
         try:
-            model = CNNLSTM(winsize = 101).to(device)
+            model = CNNLSTM(winsize=args.winsize).to(device)
         except Exception as e:
             print(e)
             return tuple([None]*3)
@@ -47,6 +47,17 @@ def get_model(
 
         return (model, optimizer, criterion)
 
+    elif args.model == 'resnetlstm':
+        try:
+            model = ResNetLSTM(winsize=args.winsize).to(device)
+        except Exception as e:
+            print(e)
+            return tuple([None]*3)
+        
+        optimizer = ResNetLSTM.get_optimizer(model)
+        criterion = ResNetLSTM.get_criterion()
+
+        return (model, optimizer, criterion)
 
     else:
         return tuple([None]*3)

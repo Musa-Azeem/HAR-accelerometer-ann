@@ -1,4 +1,4 @@
-#!/usr/bin/python3
+#!/usr/bin/env python3
 
 import torch
 from datetime import datetime
@@ -8,7 +8,6 @@ from pathlib import Path
 from torch.utils.data import DataLoader
 from smokingml.utils import get_parser, Colors, get_model, plot_and_save_cm
 from smokingml.datasets.nursing_dataset_v1 import (
-    WINSIZE,
     NursingDatasetV1,
     load_windowed_sessions,
     utils
@@ -37,6 +36,7 @@ if __name__=='__main__':
         'date': date,
         'model': args.model,
         'dataset': 'Nursing v1',
+        'winsize': args.winsize,
         'n_sessions': args.n_sessions,
         'shuffle': args.shuffle,
         'epochs': args.epochs,
@@ -80,7 +80,7 @@ if __name__=='__main__':
         print(f'Error in path to dataset directory - {e}')
         exit(1)
     
-    dataset = load_windowed_sessions(nursingv1_dir, session_ids=session_ids)
+    dataset = load_windowed_sessions(nursingv1_dir, args.winsize, session_ids=session_ids)
     train_dataset, dev_dataset = utils.train_test_split_windows(dataset, test_size=args.dev_size)
     trainloader = DataLoader(train_dataset, batch_size=args.batch, shuffle=args.shuffle)
     devloader = DataLoader(dev_dataset, batch_size=args.batch, shuffle=args.shuffle)
@@ -102,7 +102,7 @@ if __name__=='__main__':
     y_true_dev, y_pred_dev, test_loss = evaluate_loop(
         model=model,
         criterion=criterion,
-        loader=devloader,
+        devloader=devloader,
         device=device
     )
     y_true_dev,y_pred_dev = y_true_dev.flatten(), y_pred_dev.flatten()

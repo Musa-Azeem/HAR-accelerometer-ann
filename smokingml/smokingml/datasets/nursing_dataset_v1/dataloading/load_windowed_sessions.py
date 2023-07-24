@@ -4,7 +4,7 @@ from torch.utils.data import TensorDataset
 from ..utils import get_all_session_ids
 from . import load_one_windowed_session
 
-def load_windowed_sessions(dir: Path, session_ids: list[int] = None) -> TensorDataset:
+def load_windowed_sessions(dir: Path, winsize: int, session_ids: list[int] = None) -> TensorDataset:
     # return concatonated tensor of windowed sessions in list
     # if no list is provided, all the sessions are returned (might cause memory issues)
 
@@ -14,7 +14,7 @@ def load_windowed_sessions(dir: Path, session_ids: list[int] = None) -> TensorDa
     sessions = []
     all_labels = []
     for session_id in session_ids:
-        dataset = load_one_windowed_session(dir, session_id)
+        dataset = load_one_windowed_session(dir, session_id, winsize)
         sessions.append(dataset.tensors[0])
         all_labels.append(dataset.tensors[1])
     

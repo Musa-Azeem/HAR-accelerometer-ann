@@ -8,7 +8,6 @@ from pathlib import Path
 from torch.utils.data import DataLoader
 from smokingml.utils import get_parser, Colors, get_model, plot_and_save_cm
 from smokingml.datasets.nursing_dataset_v1 import (
-    WINSIZE,
     NursingDatasetV1,
     nursingv1_train_dev_test_split,    
     utils
@@ -37,6 +36,7 @@ if __name__=='__main__':
         'date': date,
         'model': args.model,
         'dataset': 'Nursing v1',
+        'winsize': args.winsize,
         'n_sessions': args.n_sessions,
         'shuffle': args.shuffle,
         'epochs': args.epochs,
@@ -86,6 +86,7 @@ if __name__=='__main__':
         train_size=1-args.dev_size,
         dev_size=args.dev_size,
         test_size=0.0,
+        winsize=args.winsize,
         shuffle=args.shuffle,
         session_ids=session_ids
     )

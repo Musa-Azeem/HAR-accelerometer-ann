@@ -1,7 +1,6 @@
 import torch
-from .. import WINSIZE
 
-def window_session(session: torch.Tensor) -> torch.Tensor:
+def window_session(session: torch.Tensor, winsize: int) -> torch.Tensor:
     # Input shape: L x 3
     # Output shape: L x 3*WINSIZE
 
@@ -10,7 +9,7 @@ def window_session(session: torch.Tensor) -> torch.Tensor:
     y_acc = session[:,1].unsqueeze(1)
     z_acc = session[:,2].unsqueeze(1)
 
-    w = WINSIZE-1
+    w = winsize-1
 
     xs = [x_acc[:-w]]
     ys = [y_acc[:-w]]
