@@ -85,6 +85,8 @@ if __name__=='__main__':
     trainloader = DataLoader(train_dataset, batch_size=args.batch, shuffle=args.shuffle)
     devloader = DataLoader(dev_dataset, batch_size=args.batch, shuffle=args.shuffle)
 
+    config['session_ids'] = session_ids
+
     # Train model
     if not args.test:
         optimization_loop(

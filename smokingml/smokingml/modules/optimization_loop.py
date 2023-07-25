@@ -25,12 +25,14 @@ def optimization_loop(
     train_loss = []
     dev_loss = []
 
+    lowest_loss = -1
+
     pbar = tqdm(range(epochs))
     for epoch in pbar:
 
         # Train Loop
         train_lossi = inner_train_loop(model, trainloader, criterion, optimizer, device)
-        train_loss.append(sum(train_lossi) / len(trainloader))
+        train_loss.append(sum(train_lossi) / len(trainloader))            
 
         # Dev Loop
         y_true, y_pred, dev_lossi = inner_evaluate_loop(model, devloader, criterion, device)
@@ -46,4 +48,9 @@ def optimization_loop(
         if outdir:
             torch.save(model.state_dict(), model_outdir / f'{epoch}.pt')
             plot_and_save_losses(train_loss, dev_loss, epochs, str(outdir / 'loss.jpg'))
+
+            # Save model with lowest loss
+            if lowest_loss < 0 or dev_loss[-1] < lowest_loss:
+                lowest_loss = dev_loss[-1]
+                torch.save(model.state_dict(), outdir / f'best_model.pt')
         plt.close()
