@@ -66,7 +66,6 @@ if __name__=='__main__':
     # Create directory for results
     outdir = Path(args.project) / f'{date}'
     outdir.mkdir(parents=True, exist_ok=True)
-    json.dump(config, open(f'{outdir}/config.json', 'w'), indent=4)
 
     # Get dataset
     nursingv1_dir = Path(args.dataset_path)
@@ -120,6 +119,8 @@ if __name__=='__main__':
     )
     y_true_dev,y_pred_dev = y_true_dev.flatten(), y_pred_dev.flatten()
     plot_and_save_cm(y_true=y_true_dev, y_pred=y_pred_dev, filename=str(outdir / 'cm.jpg'))
+
+    json.dump(config, open(f'{outdir}/config.json', 'w'), indent=4)
 
     end = time.time()
     print(f'{Colors.OKGREEN}Complete. Elapsed Time: {end-start:.3f}{Colors.ENDC}')
