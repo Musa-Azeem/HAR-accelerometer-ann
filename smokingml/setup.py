@@ -2,6 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name='smokingml',
+    python_requires='>3.10.0',
     version='0.1.0', 
     description='Library for training neural networks for Delta project',
     url='https://github.com/Musa-Azeem/HAR-smoking-ml/smokingml',
